@@ -18,21 +18,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public InfoProductDto get(UUID uuid) {
+
         return null;
     }
 
     @Override
     public List<InfoProductDto> getAll() {
+
         return null;
     }
 
     @Override
     public UUID create(ProductDto productDto) {
+
         return null;
     }
 
     @Override
     public void update(UUID uuid, ProductDto productDto) {
+
 
     }
 

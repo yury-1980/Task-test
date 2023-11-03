@@ -60,7 +60,6 @@ class ProductServiceImplTest {
 
         //then
         Assertions.assertEquals(expected, actual);
-
     }
 
     @Test
@@ -78,11 +77,17 @@ class ProductServiceImplTest {
     @Test
     void shouldGetAllInfoProductDtoReturtnList() {
         // given
-        UUID uuid = UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c");
-        List<Product> products = Arrays.asList(new Product(), new Product());
+        List<Product> products = Arrays.asList(
+                new Product(UUID.fromString("b446633f-50c2-413d-a3aa-1acdcd4b7398"), "Яблоко",
+                        "круглое вкусное", new BigDecimal("1.1"), LocalDateTime.MIN),
+                new Product(UUID.fromString("d1b14c46-ab75-43d6-b84d-870ad67814f9"), "Груша",
+                        "спелая вкусная", new BigDecimal("1.1"), LocalDateTime.MIN));
+
         List<InfoProductDto> expectedDto = Arrays.asList(
-                new InfoProductDto(uuid, "apple", "good", new BigDecimal("5.0"))
-                , new InfoProductDto(uuid, "apple", "good", new BigDecimal("3.0")));
+                new InfoProductDto(UUID.fromString("b446633f-50c2-413d-a3aa-1acdcd4b7398"), "Яблоко",
+                        "круглое вкусное", new BigDecimal("1.1")),
+                new InfoProductDto(UUID.fromString("d1b14c46-ab75-43d6-b84d-870ad67814f9"), "Груша",
+                        "спелая вкусная", new BigDecimal("1.1")));
 
         Mockito.when(productRepository.findAll()).thenReturn(products);
 
@@ -103,7 +108,7 @@ class ProductServiceImplTest {
         // given
         UUID expectedUuid = UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c");
         Product product = new Product(expectedUuid, "apple", "good", new BigDecimal("5.0"), LocalDateTime.MIN);
-        ProductDto productDto = new ProductDto("apple", "good", new BigDecimal("5.0"));
+        ProductDto productDto = new ProductDto("Яблоко", "круглое вкусное", new BigDecimal("1.1"));
 
         Mockito.when(mapper.toProduct(productDto))
                 .thenReturn(product);
@@ -120,10 +125,12 @@ class ProductServiceImplTest {
     @Test
     void shouldUpdateNewProductFromDto() {
         // given
-        UUID uuid = UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c");
-        ProductDto productDto = new ProductDto("apple", "good", new BigDecimal("3.0"));
-        Product product = new Product(uuid, "apple", "good", new BigDecimal("3.0"), LocalDateTime.MIN);
+        UUID uuid = UUID.fromString("b446633f-50c2-413d-a3aa-1acdcd4b7398");
+        ProductDto productDto = new ProductDto("Яблоко", "круглое вкусное", new BigDecimal("1.1"));
+        Product product = new Product(uuid, "Яблоко", "круглое вкусное", new BigDecimal("1.1"), LocalDateTime.MIN);
 
+        Mockito.when(productRepository.findById(uuid))
+                .thenReturn(Optional.of(product));
         Mockito.when(productRepository.save(product))
                 .thenReturn(product);
         // when

@@ -29,7 +29,6 @@ class ProductMapperImplTest {
         Assertions.assertEquals(expectedDto.name(), actual.getName());
         Assertions.assertEquals(expectedDto.description(), actual.getDescription());
         Assertions.assertEquals(expectedDto.price(), actual.getPrice());
-
     }
 
     @Test

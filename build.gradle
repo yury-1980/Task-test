@@ -12,7 +12,7 @@ java {
 }
 
 compileJava.options.encoding = 'UTF-8'
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -28,17 +28,18 @@ ext {
 }
 
 dependencies {
-    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
-
-    testImplementation 'org.assertj:assertj-core:3.24.2'
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+    implementation 'javax.el:javax.el-api:3.0.1-b06'
+    implementation 'org.glassfish:javax.el:3.0.0'
 
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {

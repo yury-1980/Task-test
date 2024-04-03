@@ -19,12 +19,19 @@ import ru.clevertec.product.repository.ProductRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -38,9 +45,11 @@ class ProductServiceImplTest {
     @InjectMocks
     private ProductServiceImpl productService;
 
+    Map<UUID, Product> productMap = new LinkedHashMap<>();
+    private static final String NUM = "f4f6f49d-6186-4b76-abe1-a5e4ebda233c";
+
     static Stream<UUID> uuid() {
-        return Stream.of(UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c")
-                , null);
+        return Stream.of(UUID.fromString(NUM));
     }
 
     @ParameterizedTest
@@ -49,9 +58,9 @@ class ProductServiceImplTest {
         // given
         InfoProductDto expected = new InfoProductDto(uuid, "apple", "good", new BigDecimal("5.0"));
 
-        Mockito.doReturn(expected)
+        doReturn(expected)
                 .when(mapper).toInfoProductDto(any(Product.class));
-        Mockito.doReturn(Optional.of(
+        doReturn(Optional.of(
                         new Product(uuid, "apple", "good", new BigDecimal("5.0"), LocalDateTime.MIN)))
                 .when(productRepository).findById(uuid);
 
@@ -59,7 +68,7 @@ class ProductServiceImplTest {
         InfoProductDto actual = productService.get(uuid);
 
         //then
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -67,11 +76,11 @@ class ProductServiceImplTest {
         // given
         UUID uuid = UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c");
 
-        Mockito.when(productRepository.findById(uuid))
+        when(productRepository.findById(uuid))
                 .thenReturn(Optional.empty());
 
         // then
-        Assertions.assertThrows(ProductNotFoundException.class, () -> productService.get(uuid));
+        assertThrows(ProductNotFoundException.class, () -> productService.get(uuid));
     }
 
     @Test
@@ -89,18 +98,18 @@ class ProductServiceImplTest {
                 new InfoProductDto(UUID.fromString("d1b14c46-ab75-43d6-b84d-870ad67814f9"), "Груша",
                         "спелая вкусная", new BigDecimal("1.1")));
 
-        Mockito.when(productRepository.findAll()).thenReturn(products);
+        when(productRepository.findAll(productMap)).thenReturn(products);
 
-        Mockito.when(mapper.toInfoProductDto(products.get(0)))
+        when(mapper.toInfoProductDto(products.get(0)))
                 .thenReturn(expectedDto.get(0));
-        Mockito.when(mapper.toInfoProductDto(products.get(1)))
+        when(mapper.toInfoProductDto(products.get(1)))
                 .thenReturn(expectedDto.get(1));
 
         // when
-        List<InfoProductDto> actualDto = productService.getAll();
+        List<InfoProductDto> actualDto = productService.getAll(productMap);
 
         // then
-        Assertions.assertEquals(expectedDto, actualDto);
+        assertEquals(expectedDto, actualDto);
     }
 
     @Test
@@ -110,16 +119,16 @@ class ProductServiceImplTest {
         Product product = new Product(expectedUuid, "apple", "good", new BigDecimal("5.0"), LocalDateTime.MIN);
         ProductDto productDto = new ProductDto("Яблоко", "круглое вкусное", new BigDecimal("1.1"));
 
-        Mockito.when(mapper.toProduct(productDto))
+        when(mapper.toProduct(productDto))
                 .thenReturn(product);
-        Mockito.when(productRepository.save(product))
+        when(productRepository.save(product))
                 .thenReturn(product);
 
         // when
         UUID actualUuid = productService.create(productDto);
 
         // then
-        Assertions.assertEquals(expectedUuid, actualUuid);
+        assertEquals(expectedUuid, actualUuid);
     }
 
     @Test
@@ -129,15 +138,16 @@ class ProductServiceImplTest {
         ProductDto productDto = new ProductDto("Яблоко", "круглое вкусное", new BigDecimal("1.1"));
         Product product = new Product(uuid, "Яблоко", "круглое вкусное", new BigDecimal("1.1"), LocalDateTime.MIN);
 
-        Mockito.when(productRepository.findById(uuid))
+
+        when(productRepository.findById(uuid))
                 .thenReturn(Optional.of(product));
-        Mockito.when(productRepository.save(product))
+        when(productRepository.save(product))
                 .thenReturn(product);
         // when
         productService.update(uuid, productDto);
 
         // then
-        Mockito.verify(productRepository).save(product);
+        verify(productRepository).save(product);
     }
 
     @Test
@@ -150,6 +160,6 @@ class ProductServiceImplTest {
         productService.delete(uuid);
 
         // then
-        Mockito.verify(productRepository).delete(uuid);
+        verify(productRepository).delete(uuid);
     }
 }

@@ -1,5 +1,6 @@
 package ru.clevertec.product.data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
@@ -18,21 +19,21 @@ public record InfoProductDto(
         /**
          * Имя продукта смотрите {@link ru.clevertec.product.entity.Product}
          */
-        @NotNull
-        @Pattern(regexp = "^[а-яА-Я\\s]{5,10}$")
+        @NotBlank(message = "Имя не должен быть пустым")
+        @Pattern(regexp = "^[Ёёа-яА-Я\\s]{5,10}$")
         String name,
 
         /**
          * Описание продукта не может быть null, может быть пустой строкой
          */
         @NotNull
-        @Size(min = 0)
+        @Pattern(regexp = "^[Ёёа-яА-Я\\s]{10,30}$")
         String description,
 
         /**
          * Стоимость не может быть null или негативным
          */
         @NotNull
-        @Positive
+        @Positive(message = "Должно быть положительным")
         BigDecimal price) {
 }

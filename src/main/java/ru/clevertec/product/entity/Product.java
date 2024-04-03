@@ -29,13 +29,13 @@ public class Product {
      * Название продукта (не может быть null или пустым, содержит 5-10 символов(русский или пробелы))
      */
     @NotNull
-    @Pattern(regexp = "^[а-яА-Я\\s]{5,10}$")
+    @Pattern(regexp = "^[Ёёа-яА-Я\\s]{5,10}$")
     private String name;
 
     /**
      * Описание продукта(может быть null или 10-30 символов(русский и пробелы))
      */
-    @Pattern(regexp = "^[а-яА-Я\\s]{10,30}$")
+    @Pattern(regexp = "^[Ёёа-яА-Я\\s]{10,30}$")
     private String description;
 
     /**

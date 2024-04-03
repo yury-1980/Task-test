@@ -1,6 +1,7 @@
 package ru.clevertec.product.mapper.impl;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.clevertec.product.data.InfoProductDto;
@@ -12,56 +13,77 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 class ProductMapperImplTest {
 
     private final ProductMapper mapper = Mappers.getMapper(ProductMapper.class);
+    private static final String NUM = "f4f6f49d-6186-4b76-abe1-a5e4ebda233c";
+    private ProductDto expectedDto;
+    private Product expectedProduct;
+
+    @BeforeEach
+    void setUp() {
+        UUID uuid = UUID.fromString(NUM);
+        expectedDto = ProductDto.builder()
+                                .name("Apple")
+                                .description("Good")
+                                .price(BigDecimal.valueOf(1.0)).build();
+
+        expectedProduct = Product.builder()
+                                 .uuid(uuid)
+                                 .name("Apple")
+                                 .description("Good")
+                                 .price(BigDecimal.valueOf(1.0))
+                                 .created(LocalDateTime.MIN).build();
+    }
 
     @Test
     void shouldConvertProductDtoToProduct() {
-        // given
-        ProductDto expectedDto = new ProductDto("Apple", "Good", BigDecimal.valueOf(1.0));
-
         // when
         Product actual = mapper.toProduct(expectedDto);
 
         // then
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(expectedDto.name(), actual.getName());
-        Assertions.assertEquals(expectedDto.description(), actual.getDescription());
-        Assertions.assertEquals(expectedDto.price(), actual.getPrice());
+        assertAll("ConvertProductDtoToProduct",
+                  () -> Assertions.assertNotNull(actual),
+                  () -> Assertions.assertEquals(expectedDto.name(), actual.getName()),
+                  () -> Assertions.assertEquals(expectedDto.description(), actual.getDescription()),
+                  () -> Assertions.assertEquals(expectedDto.price(), actual.getPrice())
+                 );
     }
 
     @Test
     void ShouldConvertProductToInfoProductDto() {
-        // given
-        UUID uuid = UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c");
-        Product expected = new Product(uuid, "Apple", "Good", BigDecimal.valueOf(1.0), LocalDateTime.MIN);
-
         // when
-        InfoProductDto actual = mapper.toInfoProductDto(expected);
+        InfoProductDto actual = mapper.toInfoProductDto(expectedProduct);
 
         // then
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(expected.getUuid(), actual.uuid());
-        Assertions.assertEquals(expected.getName(), actual.name());
-        Assertions.assertEquals(expected.getDescription(), actual.description());
-        Assertions.assertEquals(expected.getPrice(), actual.price());
+        assertAll("ConvertProductToInfoProductDto",
+                  () -> Assertions.assertNotNull(actual),
+                  () -> Assertions.assertEquals(expectedProduct.getUuid(), actual.uuid()),
+                  () -> Assertions.assertEquals(expectedProduct.getName(), actual.name()),
+                  () -> Assertions.assertEquals(expectedProduct.getDescription(), actual.description()),
+                  () -> Assertions.assertEquals(expectedProduct.getPrice(), actual.price())
+                 );
     }
 
     @Test
     void shouldMergeProductAndProductDtoReturnNewProduct() {
         // given
-        UUID uuid = UUID.fromString("f4f6f49d-6186-4b76-abe1-a5e4ebda233c");
-        Product product = new Product(uuid, "Apple", "Good", BigDecimal.valueOf(1.0), LocalDateTime.MIN);
-        ProductDto expected = new ProductDto("Apple", "Good", BigDecimal.valueOf(1.0));
+        ProductDto expectedDto = ProductDto.builder()
+                                     .name("Banana")
+                                     .description("Banana")
+                                     .price(BigDecimal.valueOf(1.5)).build();
 
         // when
-        Product actual = mapper.merge(product, expected);
+        Product actual = mapper.merge(expectedProduct, expectedDto);
 
         // then
-        Assertions.assertNotNull(actual);
-        Assertions.assertEquals(expected.name(), actual.getName());
-        Assertions.assertEquals(expected.description(), actual.getDescription());
-        Assertions.assertEquals(expected.price(), actual.getPrice());
+        assertAll("MergeProductAndProductDto",
+                  () -> Assertions.assertNotNull(actual),
+                  () -> Assertions.assertEquals(expectedDto.name(), actual.getName()),
+                  () -> Assertions.assertEquals(expectedDto.description(), actual.getDescription()),
+                  () -> Assertions.assertEquals(expectedDto.price(), actual.getPrice())
+                 );
     }
 }

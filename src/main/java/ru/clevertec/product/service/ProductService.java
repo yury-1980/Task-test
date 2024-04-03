@@ -2,9 +2,11 @@ package ru.clevertec.product.service;
 
 import ru.clevertec.product.data.InfoProductDto;
 import ru.clevertec.product.data.ProductDto;
+import ru.clevertec.product.entity.Product;
 import ru.clevertec.product.exception.ProductNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ProductService {
@@ -23,7 +25,7 @@ public interface ProductService {
      *
      * @return лист с информацией о продуктах
      */
-    List<InfoProductDto> getAll();
+    List<InfoProductDto> getAll(Map<UUID, Product> productMap);
 
     /**
      * Создаёт новый продукт из DTO

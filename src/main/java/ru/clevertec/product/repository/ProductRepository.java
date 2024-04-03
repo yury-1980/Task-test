@@ -3,6 +3,7 @@ package ru.clevertec.product.repository;
 import ru.clevertec.product.entity.Product;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public interface ProductRepository {
      *
      * @return список найденных продуктов
      */
-    List<Product> findAll();
+    List<Product> findAll(Map<UUID, Product> productMap);
 
     /**
      * Сохраняет или обновляет продукт в памяти
